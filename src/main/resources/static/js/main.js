@@ -1,4 +1,3 @@
-
 var singleUploadForm = document.querySelector('#singleUploadForm');
 var singleFileUploadInput = document.querySelector('#singleFileUploadInput');
 var singleFileUploadError = document.querySelector('#singleFileUploadError');
@@ -7,6 +6,10 @@ var singleFileUploadSuccess = document.querySelector('#singleFileUploadSuccess')
 var startRouteInput = document.querySelector('#startRouteInput');
 var finishRouteInput = document.querySelector('#finishRouteInput');
 var routeFoundResult  = document.querySelector('#routeFoundResult');
+
+var startInput = document.querySelector('#startInput');
+var finishInput = document.querySelector('#finishInput');
+var testForm = document.querySelector('#testForm');
 
 function uploadSingleFile(file, from, to) {
     var formData = new FormData();
@@ -34,7 +37,6 @@ function uploadSingleFile(file, from, to) {
             singleFileUploadError.innerHTML = (response && response.message) || "Some Error Occurred";
         }
     }
-
     xhr.send(formData);
 }
 
@@ -51,4 +53,25 @@ singleUploadForm.addEventListener('submit', function(event){
     event.preventDefault();
 }, true);
 
+testForm.addEventListener('submit', function(event){
 
+    getCurrentInformation();
+
+    event.preventDefault();
+}, true);
+
+function getCurrentInformation() {
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "/uploadFile");
+
+    xhr.onload = function () {
+        console.log(xhr.responseText);
+        var response = JSON.parse(xhr.responseText);
+        if (xhr.status == 200) {
+            startInput.value = response.from;
+            finishInput.value = response.to;
+        }
+    }
+    xhr.send();
+}

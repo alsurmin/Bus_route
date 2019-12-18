@@ -1,5 +1,6 @@
 package com.example.filedemo.controller;
 
+import com.example.filedemo.payload.Route;
 import com.example.filedemo.payload.UploadFileResponse;
 import com.example.filedemo.service.BusRoutService;
 import com.example.filedemo.service.FileStorageService;
@@ -23,8 +24,6 @@ import java.util.stream.Collectors;
 @RestController
 public class FileController {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileController.class);
-
     @Autowired
     private FileStorageService fileStorageService;
 
@@ -37,6 +36,9 @@ public class FileController {
                                          @RequestParam("to") String to) {
         String fileName = fileStorageService.storeFile(file);
 
+        busRoutService.setFrom(from);
+        busRoutService.setTo(to);
+
         String routeFound = busRoutService.parseFile(file, from, to);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -44,11 +46,13 @@ public class FileController {
                 .path(fileName)
                 .toUriString();
 
-
-
         return new UploadFileResponse(fileName, fileDownloadUri,
                 file.getContentType(), file.getSize(), routeFound);
     }
-
-
+    @GetMapping("/uploadFile")
+    public Route getCurrentRotePoint() {
+        String to = busRoutService.getTo();
+        String from = busRoutService.getFrom();
+        return new Route(to, from);
+    }
 }
