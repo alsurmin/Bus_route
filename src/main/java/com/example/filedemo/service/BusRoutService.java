@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -42,6 +43,8 @@ public class BusRoutService {
 
     public String parseFile(MultipartFile multipartFile, String from, String to) {
 
+        long start = System.currentTimeMillis();
+
         String result = "-1";
 
         try {
@@ -61,7 +64,7 @@ public class BusRoutService {
                 int indexTo = listOfStations.indexOf(to);
 
                 if (indexFrom != -1 && indexTo != -1) {
-                    if (indexFrom > indexTo) {
+                    if (indexFrom < indexTo) {
                         result = numberOfRoute;
                         break;
                     }
@@ -71,6 +74,11 @@ public class BusRoutService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        long finish = System.currentTimeMillis();
+        long allTime = finish - start;
+        System.out.println(allTime);
+
         return result;
 
     }
